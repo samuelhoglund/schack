@@ -1,0 +1,2 @@
+1. uppdatera inte rutor som inte påverkas av ett drag
+2. 
