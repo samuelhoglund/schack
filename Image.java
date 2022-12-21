@@ -1,5 +1,8 @@
 package proj;
 
 public class Image {
-    // gör så att alla pjäser har en egen bild
+    public static void main( String[] args) {
+        String dir = System.getProperty("user.dir").replace("\\", "\\\\");
+        System.out.println(dir);
+    }
 }
