@@ -1,8 +1,9 @@
 package proj;
+import javax.swing.Icon;
 
 public class Rook extends Piece {
 
-    Rook(String color, Board board, Image image) {
+    Rook(boolean color, Chess board, Icon image) {
         super(color, board, image);
         //TODO Auto-generated constructor stub
     }
@@ -12,5 +13,6 @@ public class Rook extends Piece {
         // TODO Auto-generated method stub
         return false;
     }
+
     
 }

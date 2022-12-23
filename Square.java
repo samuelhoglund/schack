@@ -1,30 +1,14 @@
 package proj;
 
-public class Square {
-    private int x; private int y;   // Coordinates
-    Piece piece = null;
-    
-    public Square(int x, int y, Piece piece) {
-        this.x = x;
-        this.y = y;
-        this.piece = piece;
-    }
+import javax.swing.JButton;
 
-    public Piece getPiece() {
-        return this.piece;
-    }
+public class Square extends JButton {
+    public int x; 
+    public int y;
+    public Piece piece;
 
-    public int getX() {
-        return this.x;
-    }
-    public int getY() {
-        return this.y;
-    }
-    public void setX(int x) {
-        this.x = x;
-    }
-    public void setY(int y) {
-        this.y = y;
+    public Square() {
+        super();
     }
     
 }

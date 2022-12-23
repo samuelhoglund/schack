@@ -1,8 +1,9 @@
 package proj;
+import javax.swing.Icon;
 
 public class Knight extends Piece {
 
-    Knight(String color, Board board, Image image) {
+    Knight(boolean color, Chess board, Icon image) {
         super(color, board, image);
         //TODO Auto-generated constructor stub
     }

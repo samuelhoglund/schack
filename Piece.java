@@ -1,11 +1,12 @@
 package proj;
+import javax.swing.Icon;
 
 abstract class Piece {
     // Inspiration från föreläsning 2
-    Color color; Board board; Image image;
+    boolean color; Chess board; Icon image;
 
-    Piece(String color, Board board, Image image) {
-        this.color = new Color(color);
+    Piece(boolean color, Chess board, Icon image) {
+        this.color = color;     // let's say white == true and black == false as standard
         this.board = board;
         this.image = image;
     }
