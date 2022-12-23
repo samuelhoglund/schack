@@ -1,4 +1,4 @@
-package proj;
+
 import javax.swing.Icon;
 
 public class King extends Piece {

@@ -1,6 +1,3 @@
-package proj;
-
-
 public class Board {
     oldSquare[][] board = new oldSquare[8][8];
     String dir = System.getProperty("user.dir").replace("\\", "\\\\") + "\\\\proj\\\\images";

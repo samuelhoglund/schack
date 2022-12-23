@@ -1,4 +1,4 @@
-package proj;
+
 
 import javax.swing.ImageIcon;
 
@@ -8,7 +8,8 @@ public class Chess implements Boardgame {
     int moveCount = 0;
     Piece currPiece;    //////////
     static int count = 0;
-    String dir = System.getProperty("user.dir").replace("\\", "\\\\") + "\\\\proj\\\\images\\\\";
+    static String currMessage;
+    String dir = System.getProperty("user.dir").replace("\\", "\\\\") + "\\\\images\\\\";
 
     public Chess() {
         this.board = new oldSquare[8][8];
@@ -52,19 +53,38 @@ public class Chess implements Boardgame {
     }
 
 
-    private Piece grabPiece(int x, int y) {
-        
-        
+    private Piece grabPiece(int x, int y, boolean white) {
+        System.out.println("här");
+        String tempMessage;
+        if (white) {
+            tempMessage = "White's turn. ";
+        }
+        else {tempMessage = "Black's turn. ";}
+
         Piece piece = board[x][y].getPiece();
-        if (piece==null) { return piece; }
+        if (piece==null) { currMessage = tempMessage + "Grab a piece"; return piece; }
+        
         moveCount++;
+        System.out.println(moveCount);
         board[x][y].setEmpty();
-        System.out.println(board[x][y].getPiece());
+
+        if (white) {
+            tempMessage = "White's turn. ";
+        }
+
+        currMessage = tempMessage + "Place your piece.";
+
         return piece;
     }
-    private void placePiece(int x, int y, Piece p) {
+    private void placePiece(int x, int y, Piece p, boolean white) {
+        String tempMessage;
+        if (white) {
+            tempMessage = "White's turn. ";
+        }
+        else {tempMessage = "Black's turn. ";}
+        currMessage = tempMessage + "Grab a piece. ";
+        
         moveCount++;
-        System.out.println("här");
         board[x][y].addPiece(p);//// 
     }
 
@@ -73,20 +93,25 @@ public class Chess implements Boardgame {
     public boolean move(int x, int y) {
         //if (board[x][y].piece==null) {System.out.println("empty"); return false; }
         
-        Piece piece = board[x][y].getPiece();
+        //Piece piece = board[x][y].getPiece();
         //System.out.println(piece.toString());
+        System.out.println("moveCunt=" + moveCount);
 
         if(moveCount%4==2) {
-            currPiece = grabPiece(x,y);
+            currPiece = grabPiece(x,y, false);
+            //currMessage = "Black's turn. Grab a piece.";
             }
         else if(moveCount%4==3) {
-            placePiece(x,y,currPiece);
+            placePiece(x,y,currPiece, true);
+            //currMessage = "Black's turn. Place your piece.";
         }
         else if(moveCount%4==0) {
-            currPiece = grabPiece(x,y);
+            currPiece = grabPiece(x,y, true);
+            //currMessage = "White's turn. Grab a piece.";
             }
         else if(moveCount%4==1) {
-            placePiece(x,y,currPiece);
+            placePiece(x,y,currPiece,false);
+            //currMessage = "White's turn. Place your piece.";
         }
     
     return false;
@@ -102,7 +127,7 @@ public class Chess implements Boardgame {
     public String getMessage() {
         count += 1;
         //System.out.println("Click " + count);
-        return "Click " + count;
+        return count + ": " + currMessage;
     }
     
 }

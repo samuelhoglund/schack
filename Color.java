@@ -1,4 +1,4 @@
-package proj;
+
 
 public class Color {
     boolean black;

@@ -1,4 +1,4 @@
-package proj;
+
 
 interface Boardgame {
     public boolean move(int x, int y);
