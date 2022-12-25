@@ -101,12 +101,11 @@ class ViewControl extends JFrame implements ActionListener {
         int y = s.y;//getY();
         game.move(x, y);
         mess.setText(game.getMessage());
-        //setIcon(graphicBoard, x, y);
+        setIcon(graphicBoard, x, y);
         
-        System.out.println("click");
         for (int i=0; i<size; i++){         // Update the buttonfield with getStatus(i, j)
             for (int j=0; j<size; j++){
-                setIcon(graphicBoard, i, j); 
+                //setIcon(graphicBoard, i, j); 
                 //board[i][j].setText(game.getStatus(i, j));
                 
             }

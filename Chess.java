@@ -62,15 +62,12 @@ public class Chess implements Boardgame {
         else {tempMessage = "Black's turn. ";}
 
         Piece piece = board[x][y].getPiece();
-        if (piece==null) { currMessage = tempMessage + "Grab a piece"; return piece; }
+        if (piece==null ) { currMessage = tempMessage + "Grab a piece."; return piece; }
+        else if (piece.color != white) { currMessage = tempMessage + "Grab your own piece."; return piece; }
         
         moveCount++;
         System.out.println(moveCount);
         board[x][y].setEmpty();
-
-        if (white) {
-            tempMessage = "White's turn. ";
-        }
 
         currMessage = tempMessage + "Place your piece.";
 
@@ -93,26 +90,22 @@ public class Chess implements Boardgame {
 
     @Override
     public boolean move(int x, int y) {
-        //if (board[x][y].piece==null) {System.out.println("empty"); return false; }
-        
-        //Piece piece = board[x][y].getPiece();
-        //System.out.println(piece.toString());
-        System.out.println("moveCunt=" + moveCount);
-
         if(moveCount%4==2) {
             currPiece = grabPiece(x,y, false);
             //currMessage = "Black's turn. Grab a piece.";
             }
         else if(moveCount%4==3) {
-            if ( board[x][y].hasPiece() && board[x][y].getPiece().color != currPiece.color) {
+            if ( board[x][y].hasPiece() && board[x][y].getPiece().color != currPiece.color) {       // KANSKE GÖRA TILL HJÄLPMETOD FÖR ATT SVART OCH VITS KOD ÄR SKITLIKA
                 placePiece(x,y,currPiece, true);    // eliminering av motståndarpjäs
             }
             else if ( !board[x][y].hasPiece()) {
                 placePiece(x,y,currPiece, true);    // vanlig utplacering
             }
+            else { currMessage = "Faulty move."; }
             //currMessage = "Black's turn. Place your piece.";
         }
         else if(moveCount%4==0) {
+            
             currPiece = grabPiece(x,y, true);
             //currMessage = "White's turn. Grab a piece.";
             }
@@ -121,8 +114,9 @@ public class Chess implements Boardgame {
                 placePiece(x,y,currPiece, false);   // eliminering av motståndarpjs
             }
             else if ( !board[x][y].hasPiece()) {
-                placePiece(x,y,currPiece, true);    // vanlig utplacering
+                placePiece(x,y,currPiece, false);    // vanlig utplacering
             }
+            else { currMessage = "Faulty move."; }
             //currMessage = "White's turn. Place your piece.";
         }
     
@@ -137,9 +131,8 @@ public class Chess implements Boardgame {
 
     @Override
     public String getMessage() {
-        count += 1;
         //System.out.println("Click " + count);
-        return count + ": " + currMessage;
+        return moveCount + ": " + currMessage;
     }
     
 }
