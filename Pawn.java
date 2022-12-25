@@ -9,18 +9,40 @@ public class Pawn extends Piece {
     }
 
     @Override
-    boolean moveOK(oldSquare s1, oldSquare s2) {
-        if (this.color) {   // white
-            if (s1.x == 1) {
-                // tillåt ett eller två steg framåt (eller eliminering)
+    boolean moveOK(oldSquare s1, oldSquare s2, oldSquare[][] board) {
+        if (!s2.hasPiece()) {   // rörelsefas
+            if (!this.color) {   // black
+                if (s1.x == 1) {
+                    // tillåt ett eller två steg framåt (eller eliminering)
+                    if (s2.y == s1.y & (s2.x == 3 | s2.x == 2)) {
+                        return true;        // vanligt startdrag
+                    }
+                }
+                else {
+                    if (s2.y == s1.y & s2.x == s1.x-1) {
+                        return true;        // vanligt drag förutom start
+                    }
+                }
+            }
+            
+            else {              // white
+                if (s1.x == 6) {
+                    // tillåt ett eller två steg framåt (eller eliminering)
+                    if (s2.y == s1.y & (s2.x == 4 | s2.x == 5)) {
+                        return true;        // vanligt startdrag
+                    } 
+                }
+                else {
+                    if (s2.y == s1.y & s2.x ==  s1.x+1) {
+                        return true;        // vanligt drag förutom start
+                    }
+                }
             }
         }
-        else {              // black
-            if (s1.x == 6) {
-                // tillåt ett eller två steg framåt (eller eliminering) 
-            }
+        else {      // ATTACK
 
         }
+
         
         
         return false;
