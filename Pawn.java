@@ -9,8 +9,15 @@ public class Pawn extends Piece {
     }
 
     @Override
-    boolean moveOK(Square s1, Square s2) {
-        // TODO Auto-generated method stub
+    boolean moveOK(oldSquare s1, oldSquare s2) {
+        if (this.color) {   // white
+            
+        }
+        else {              // black
+
+        }
+        
+        
         return false;
     }
 

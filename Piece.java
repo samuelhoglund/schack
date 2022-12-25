@@ -11,6 +11,13 @@ abstract class Piece {
         this.image = image;
     }
 
-    abstract boolean moveOK(Square s1, Square s2);  // Föreläsning 2
+    abstract boolean moveOK(oldSquare s1, oldSquare s2);  // Föreläsning 2
+
+    public boolean coordinatesExist(int x, int y) {
+        if (x<8 & x>=0 & y>=0 & y<8) {
+            return true;
+        }
+        return false;
+    }
     
 }

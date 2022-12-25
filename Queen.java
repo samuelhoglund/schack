@@ -9,7 +9,7 @@ public class Queen extends Piece {
     }
 
     @Override
-    boolean moveOK(Square s1, Square s2) {
+    boolean moveOK(oldSquare s1, oldSquare s2) {
         // TODO Auto-generated method stub
         return false;
     }
