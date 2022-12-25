@@ -11,9 +11,14 @@ public class Pawn extends Piece {
     @Override
     boolean moveOK(oldSquare s1, oldSquare s2) {
         if (this.color) {   // white
-            
+            if (s1.x == 1) {
+                // tillåt ett eller två steg framåt (eller eliminering)
+            }
         }
         else {              // black
+            if (s1.x == 6) {
+                // tillåt ett eller två steg framåt (eller eliminering) 
+            }
 
         }
         

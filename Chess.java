@@ -10,6 +10,7 @@ public class Chess implements Boardgame {
     static int count = 0;
     static String currMessage;
     String dir = System.getProperty("user.dir").replace("\\", "\\\\") + "\\\\images\\\\";
+    oldSquare startSquare; oldSquare endSquare;
 
     public Chess() {
         this.board = new oldSquare[8][8];
@@ -81,7 +82,6 @@ public class Chess implements Boardgame {
         else {tempMessage = "Black's turn. ";}
         currMessage = tempMessage + "Grab a piece. ";
         
-        
         moveCount++;
         board[x][y].addPiece(p);//// 
         
@@ -91,29 +91,35 @@ public class Chess implements Boardgame {
     @Override
     public boolean move(int x, int y) {
         if(moveCount%4==2) {
+            startSquare = board[x][y];
             currPiece = grabPiece(x,y, false);
+            // kan ta ut gamla squaren
             //currMessage = "Black's turn. Grab a piece.";
             }
         else if(moveCount%4==3) {
             if ( board[x][y].hasPiece() && board[x][y].getPiece().color != currPiece.color) {       // KANSKE GÖRA TILL HJÄLPMETOD FÖR ATT SVART OCH VITS KOD ÄR SKITLIKA
+                endSquare = board[x][y];
                 placePiece(x,y,currPiece, true);    // eliminering av motståndarpjäs
             }
             else if ( !board[x][y].hasPiece()) {
+                endSquare = board[x][y];
                 placePiece(x,y,currPiece, true);    // vanlig utplacering
             }
             else { currMessage = "Faulty move."; }
             //currMessage = "Black's turn. Place your piece.";
         }
         else if(moveCount%4==0) {
-            
+            startSquare = board[x][y];
             currPiece = grabPiece(x,y, true);
             //currMessage = "White's turn. Grab a piece.";
             }
         else if(moveCount%4==1) {
             if ( board[x][y].hasPiece() && board[x][y].getPiece().color != currPiece.color) {
+                endSquare = board[x][y];
                 placePiece(x,y,currPiece, false);   // eliminering av motståndarpjs
             }
             else if ( !board[x][y].hasPiece()) {
+                endSquare = board[x][y];
                 placePiece(x,y,currPiece, false);    // vanlig utplacering
             }
             else { currMessage = "Faulty move."; }
