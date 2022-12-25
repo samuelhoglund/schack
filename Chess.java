@@ -21,8 +21,6 @@ public class Chess implements Boardgame {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 board[i][j] = new oldSquare(i, j, null);
-                //board[i][j].setX(i);
-                //board[i][j].setY(j);
             }
         }
     }
