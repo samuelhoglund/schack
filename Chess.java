@@ -76,7 +76,7 @@ public class Chess implements Boardgame {
     }
     private void placePiece(int x, int y, Piece p, boolean white) {
         String tempMessage;
-        if (white) {
+        if (!white) {
             tempMessage = "White's turn. ";
         }
         else {tempMessage = "Black's turn. ";}
@@ -99,16 +99,18 @@ public class Chess implements Boardgame {
         else if(moveCount%4==3) {
             if ( board[x][y].hasPiece() && board[x][y].getPiece().color != currPiece.color) {       // KANSKE GÖRA TILL HJÄLPMETOD FÖR ATT SVART OCH VITS KOD ÄR SKITLIKA
                 endSquare = board[x][y];
-                
-                    placePiece(x,y,currPiece, true);    // eliminering av motståndarpjäs
+                if (currPiece.moveOK(startSquare, endSquare, board)) {
+                    placePiece(x,y,currPiece, false);    // eliminering av motståndarpjäs
+                }
                 
             }
             else if ( !board[x][y].hasPiece()) {
                 endSquare = board[x][y];
                 if (currPiece.moveOK(startSquare, endSquare, board)) {
-                    placePiece(x,y,currPiece, true);    // vanlig utplacering
+                    placePiece(x,y,currPiece, false);    // vanlig utplacering
                 }
             }
+            else if (board[x][y].equals(startSquare)) {moveCount--; placePiece(x, y, currPiece, false);} // tillåta att gå tillbaka och köra igen
             else { currMessage = "Faulty move."; }
             //currMessage = "Black's turn. Place your piece.";
         }
@@ -120,12 +122,17 @@ public class Chess implements Boardgame {
         else if(moveCount%4==1) {
             if ( board[x][y].hasPiece() && board[x][y].getPiece().color != currPiece.color) {
                 endSquare = board[x][y];
-                placePiece(x,y,currPiece, false);   // eliminering av motståndarpjs
+                if (currPiece.moveOK(startSquare, endSquare, board)) {
+                    placePiece(x,y,currPiece, true);   // eliminering av motståndarpjs
+                }
             }
             else if ( !board[x][y].hasPiece()) {
                 endSquare = board[x][y];
-                placePiece(x,y,currPiece, false);    // vanlig utplacering
+                if (currPiece.moveOK(startSquare, endSquare, board)) {
+                    placePiece(x,y,currPiece, true);    // vanlig utplacering
+                }
             }
+            else if (board[x][y].equals(startSquare)) {moveCount--; placePiece(x, y, currPiece, true);} // tillåta att gå tillbaka och köra igen
             else { currMessage = "Faulty move."; }
             //currMessage = "White's turn. Place your piece.";
         }
