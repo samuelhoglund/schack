@@ -85,7 +85,9 @@ public class Chess implements Boardgame {
         currMessage = tempMessage + "Grab a piece. ";
         
         moveCount++;
-        board[x][y].addPiece(p);//// 
+        if (!board[x][y].getPiece().color==p.color) {
+            board[x][y].addPiece(p);//// 
+        }
     }
 
 
