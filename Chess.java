@@ -102,13 +102,13 @@ public class Chess implements Boardgame {
                 }
                 
             }
+            else if (board[x][y].equals(startSquare)) {System.out.println("samma  ruta");moveCount-=2; placePiece(x, y, currPiece, true);} // tillåta att gå tillbaka och köra igen
             else if ( !board[x][y].hasPiece()) {
                 endSquare = board[x][y];
                 if (currPiece.moveOK(startSquare, endSquare, board)) {
                     placePiece(x,y,currPiece, false);    // vanlig utplacering
                 }
             }
-            else if (board[x][y].equals(startSquare)) {moveCount--; placePiece(x, y, currPiece, false);} // tillåta att gå tillbaka och köra igen
             else { currMessage = "Faulty move."; }
             //currMessage = "Black's turn. Place your piece.";
         }
@@ -124,13 +124,13 @@ public class Chess implements Boardgame {
                     placePiece(x,y,currPiece, true);   // eliminering av motståndarpjs
                 }
             }
+            else if (board[x][y].equals(startSquare)) {moveCount-=2; placePiece(x, y, currPiece, false);} // tillåta att gå tillbaka och köra igen
             else if ( !board[x][y].hasPiece()) {
                 endSquare = board[x][y];
                 if (currPiece.moveOK(startSquare, endSquare, board)) {
                     placePiece(x,y,currPiece, true);    // vanlig utplacering
                 }
             }
-            else if (board[x][y].equals(startSquare)) {moveCount--; placePiece(x, y, currPiece, true);} // tillåta att gå tillbaka och köra igen
             else { currMessage = "Faulty move."; }
             //currMessage = "White's turn. Place your piece.";
         }
