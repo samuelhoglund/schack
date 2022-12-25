@@ -85,10 +85,9 @@ public class Chess implements Boardgame {
         currMessage = tempMessage + "Grab a piece. ";
         
         
-        if (!board[x][y].getPiece().color==p.color) {
-            moveCount++;
-            board[x][y].addPiece(p);//// 
-        }
+        moveCount++;
+        board[x][y].addPiece(p);//// 
+        
     }
 
 
@@ -105,7 +104,12 @@ public class Chess implements Boardgame {
             //currMessage = "Black's turn. Grab a piece.";
             }
         else if(moveCount%4==3) {
-            placePiece(x,y,currPiece, true);
+            if ( board[x][y].hasPiece() && board[x][y].getPiece().color != currPiece.color) {
+                placePiece(x,y,currPiece, true);    // eliminering av motståndarpjäs
+            }
+            else if ( !board[x][y].hasPiece()) {
+                placePiece(x,y,currPiece, true);    // vanlig utplacering
+            }
             //currMessage = "Black's turn. Place your piece.";
         }
         else if(moveCount%4==0) {
@@ -113,7 +117,12 @@ public class Chess implements Boardgame {
             //currMessage = "White's turn. Grab a piece.";
             }
         else if(moveCount%4==1) {
-            placePiece(x,y,currPiece,false);
+            if ( board[x][y].hasPiece() && board[x][y].getPiece().color != currPiece.color) {
+                placePiece(x,y,currPiece, false);   // eliminering av motståndarpjs
+            }
+            else if ( !board[x][y].hasPiece()) {
+                placePiece(x,y,currPiece, true);    // vanlig utplacering
+            }
             //currMessage = "White's turn. Place your piece.";
         }
     

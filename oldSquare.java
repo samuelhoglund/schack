@@ -10,7 +10,12 @@ public class oldSquare {
         this.y = y;
         this.piece = piece;
     }
-
+    public boolean hasPiece() {
+        if (this.piece!=null) {
+            return true;
+        }
+        return false;
+    }
     public Piece getPiece() {
         return this.piece;
     }
