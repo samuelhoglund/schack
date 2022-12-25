@@ -84,8 +84,9 @@ public class Chess implements Boardgame {
         else {tempMessage = "Black's turn. ";}
         currMessage = tempMessage + "Grab a piece. ";
         
-        moveCount++;
+        
         if (!board[x][y].getPiece().color==p.color) {
+            moveCount++;
             board[x][y].addPiece(p);//// 
         }
     }
