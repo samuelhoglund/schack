@@ -14,7 +14,7 @@ public class Rook extends Piece {
 
         // base case
         if (s2.hasPiece() && s2.getPiece().color==this.color) { return false; }
-        if (((s2.x == s1.x+1 | s2.x == s1.x-1) & s2.y == s1.y) || ((s2.y == s1.y+1 | s2.y == s1.y-1) & s2.x == s1.x)) {    // one square away
+        if ((Math.abs(s2.x-s1.x) == 1 & s2.y == s1.y) || (Math.abs(s2.y-s1.y) == 1 & s2.x == s1.x)) {    // one square away
             return true;
         }
 

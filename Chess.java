@@ -91,52 +91,41 @@ public class Chess implements Boardgame {
         if(moveCount%4==2) {
             startSquare = board[x][y];
             currPiece = grabPiece(x,y, false);
-            // kan ta ut gamla squaren
-            //currMessage = "Black's turn. Grab a piece.";
             }
         else if(moveCount%4==3) {
-            if ( board[x][y].hasPiece() && board[x][y].getPiece().color != currPiece.color) {       // KANSKE GÖRA TILL HJÄLPMETOD FÖR ATT SVART OCH VITS KOD ÄR SKITLIKA
-                endSquare = board[x][y];
-                if (currPiece.moveOK(startSquare, endSquare, board)) {
-                    placePiece(x,y,currPiece, false);    // eliminering av motståndarpjäs
-                }
-                
+            endSquare = board[x][y];
+            if (board[x][y].equals(startSquare)) {moveCount-=2; placePiece(x, y, currPiece, true);} // tillåta att gå tillbaka och köra igen om man e på samma ruta
+            else if (currPiece.moveOK(startSquare, endSquare, board)) {
+                placePiece(x,y,currPiece, false);    // eliminering av motståndarpjäs
             }
-            else if (board[x][y].equals(startSquare)) {System.out.println("samma  ruta");moveCount-=2; placePiece(x, y, currPiece, true);} // tillåta att gå tillbaka och köra igen
-            else if ( !board[x][y].hasPiece()) {
-                endSquare = board[x][y];
-                if (currPiece.moveOK(startSquare, endSquare, board)) {
-                    placePiece(x,y,currPiece, false);    // vanlig utplacering
-                }
-            }
-            else { currMessage = "Faulty move."; }
-            //currMessage = "Black's turn. Place your piece.";
+            
         }
         else if(moveCount%4==0) {
             startSquare = board[x][y];
             currPiece = grabPiece(x,y, true);
-            //currMessage = "White's turn. Grab a piece.";
             }
         else if(moveCount%4==1) {
-            if ( board[x][y].hasPiece() && board[x][y].getPiece().color != currPiece.color) {
-                endSquare = board[x][y];
-                if (currPiece.moveOK(startSquare, endSquare, board)) {
-                    placePiece(x,y,currPiece, true);   // eliminering av motståndarpjs
-                }
+            endSquare = board[x][y];
+            if (board[x][y].equals(startSquare)) {moveCount-=2; placePiece(x, y, currPiece, false);} // tillåta att gå tillbaka och köra igen
+            else if (currPiece.moveOK(startSquare, endSquare, board)) {
+                placePiece(x,y,currPiece, true);    // vanlig utplacering
             }
-            else if (board[x][y].equals(startSquare)) {moveCount-=2; placePiece(x, y, currPiece, false);} // tillåta att gå tillbaka och köra igen
-            else if ( !board[x][y].hasPiece()) {
-                endSquare = board[x][y];
-                if (currPiece.moveOK(startSquare, endSquare, board)) {
-                    placePiece(x,y,currPiece, true);    // vanlig utplacering
-                }
-            }
-            else { currMessage = "Faulty move."; }
-            //currMessage = "White's turn. Place your piece.";
+            
         }
     
     return false;
 
+    }
+
+    public void analyze(oldSquare s1, Piece p) {
+        for (int i=0; i<8; i++) {
+            for (int j=0; j<8; j++) {
+                oldSquare s2 = board[i][j];
+                if (p.moveOK(s1, s2, board)) {
+                    
+                }
+            }
+        }
     }
 
     @Override
