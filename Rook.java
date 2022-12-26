@@ -10,14 +10,11 @@ public class Rook extends Piece {
 
     @Override
     boolean moveOK(oldSquare s1, oldSquare s2, oldSquare[][] board) {
-        System.out.println("i rook");
         int start = 0; int end = 0;
 
         // base case
         if (s2.hasPiece() && s2.getPiece().color==this.color) { return false; }
-        else if (((s2.x == s1.x+1 | s2.x == s1.x-1) & s2.y == s1.y) || ((s2.y == s1.y+1 | s2.y == s1.y-1) & s2.x == s1.x)) {    // one square away
-            if (s2.hasPiece() && s2.getPiece().color==this.color) {  // if there is ally on s2, move is not accepted
-                return false; }
+        if (((s2.x == s1.x+1 | s2.x == s1.x-1) & s2.y == s1.y) || ((s2.y == s1.y+1 | s2.y == s1.y-1) & s2.x == s1.x)) {    // one square away
             return true;
         }
 
