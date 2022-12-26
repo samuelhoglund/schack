@@ -1,6 +1,5 @@
 
 import javax.swing.Icon;
-import java.math.*;
 
 public class Bishop extends Piece {
 
@@ -17,7 +16,7 @@ public class Bishop extends Piece {
         dx = Math.abs(s2.x-s1.x); dy = Math.abs(s2.y-s1.y);
         // base cases
         if (dx-dy != 0 | (s2.hasPiece() && s2.getPiece().color==this.color)) { return false; }
-        
+
         if (dx == 1 & dy == 1){    // one square away
             return true;
         }
@@ -49,7 +48,6 @@ public class Bishop extends Piece {
                 return true;
             }
         }
-        //return false;
     }
     
 }
