@@ -12,10 +12,7 @@ public class Image {
         return image;
     }
     
-
-
     public static void main( String[] args) {
         String dir = System.getProperty("user.dir").replace("\\", "\\\\") + "\\\\proj\\\\images";
-        System.out.println(dir);
     }
 }
