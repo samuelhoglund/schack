@@ -18,6 +18,7 @@ class ViewControl extends JFrame implements ActionListener {
     private Color dark = new Color(115,149,90);
     private Color light = new Color(238,237,211);
     String dir = System.getProperty("user.dir").replace("\\", "\\\\") + "\\\\proj\\\\images";
+    boolean movePhase = true;
 
     ViewControl (Chess gm, int n) {
         JPanel boardHost = new JPanel();
@@ -32,12 +33,6 @@ class ViewControl extends JFrame implements ActionListener {
         for (int i=0; i<n; i++){     
             for (int j=0; j<n; j++){
                  
-                //Piece piece = null;
-                //Piece piece = board[i][j].piece;
-                
-                /*
-                board[i][j] = new Square(i,j,piece);
-                */
                 graphicBoard[i][j] = new Square();
                 
                 graphicBoard[i][j].x = i;
@@ -86,7 +81,6 @@ class ViewControl extends JFrame implements ActionListener {
     }
 
     private void setIcon(Square[][] graphicBoard, int i, int j) {
-        //if (game.board[i][j].getPiece()==null) { System.out.println("null"); graphicBoard[i][j].setIcon(null); return; }
         Piece piece = game.board[i][j].getPiece();
         if (piece!=null) {
             graphicBoard[i][j].setIcon(piece.image);
@@ -100,14 +94,19 @@ class ViewControl extends JFrame implements ActionListener {
         int x = s.x;//getX();
         int y = s.y;//getY();
         game.move(x, y);
+        if (movePhase) {
+            
+        }
+
         mess.setText(game.getMessage());
         setIcon(graphicBoard, x, y);
+
+        movePhase = !movePhase;
         
         for (int i=0; i<size; i++){         // Update the buttonfield with getStatus(i, j)
             for (int j=0; j<size; j++){
                 //setIcon(graphicBoard, i, j); 
                 //board[i][j].setText(game.getStatus(i, j));
-                
             }
         }        
     }

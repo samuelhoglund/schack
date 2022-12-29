@@ -1,6 +1,10 @@
 
 
 import javax.swing.ImageIcon;
+import java.util.Scanner;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Chess implements Boardgame {
 
@@ -11,6 +15,8 @@ public class Chess implements Boardgame {
     static String currMessage;
     String dir = System.getProperty("user.dir").replace("\\", "\\\\") + "\\\\images\\\\";
     oldSquare startSquare; oldSquare endSquare;
+    Queue<oldSquare> possibleSquares = new LinkedList<>();  // initally empty. To be filled with available spots a piece can move to.
+    Scanner sc = new Scanner(System.in);
 
     public Chess() {
         this.board = new oldSquare[8][8];
@@ -55,17 +61,17 @@ public class Chess implements Boardgame {
     private Piece grabPiece(int x, int y, boolean white) {
         System.out.println("här");
         String tempMessage;
+        
         if (white) {
             tempMessage = "White's turn. ";
         }
         else {tempMessage = "Black's turn. ";}
 
         Piece piece = board[x][y].getPiece();
-        if (piece==null ) { currMessage = tempMessage + "Grab a piece."; return piece; }
+        if (piece==null) { currMessage = tempMessage + "Grab a piece."; return piece; }
         else if (piece.color != white) { currMessage = tempMessage + "Grab your own piece."; return piece; }
         
         moveCount++;
-        System.out.println(moveCount);
         board[x][y].setEmpty();
 
         currMessage = tempMessage + "Place your piece.";
@@ -87,10 +93,35 @@ public class Chess implements Boardgame {
 
 
     @Override
-    public boolean move(int x, int y) {
+    public int move(int x, int y) {
         if(moveCount%4==2) {
             startSquare = board[x][y];
             currPiece = grabPiece(x,y, false);
+            
+            possibleSquares = analyze(startSquare, currPiece);
+
+            if (possibleSquares.isEmpty()) {
+                moveCount-=2; 
+                placePiece(x, y, currPiece, false);
+                currMessage = "No free spots."; 
+            }   // man får köra om
+            else if (possibleSquares.size() == 1) {
+                // "vill du gå hit?" "Spelaren ska kunna bekräfta det automatiska förflyttningen innan turen går över till nästa spelare." 
+                oldSquare autoMove = possibleSquares.remove();
+                int x2 = autoMove.getX(); int y2 = autoMove.getY();
+                placePiece(x2,y2,currPiece, false);
+
+                String ans = " ";
+                while (!ans.equals("y") & !ans.equals("n")) {
+                    System.out.print("Confirm move? y/n: ");
+                    ans = sc.next();
+                }
+                if (ans.equals("n")) {
+                    moveCount-=2; placePiece(x, y, currPiece, false);
+                }
+            }
+            // annars ska det vara som vanligt. ViewControl fyller i tillgängliga rutor
+
             }
         else if(moveCount%4==3) {
             endSquare = board[x][y];
@@ -103,30 +134,55 @@ public class Chess implements Boardgame {
         else if(moveCount%4==0) {
             startSquare = board[x][y];
             currPiece = grabPiece(x,y, true);
+
+            possibleSquares = analyze(startSquare, currPiece);
+
+            if (possibleSquares.isEmpty()) {
+                moveCount-=2; 
+                placePiece(x, y, currPiece, true);
+                currMessage = "No free spots."; 
+            }   // man får köra om
+            else if (possibleSquares.size() == 1) {
+                // "vill du gå hit?" "Spelaren ska kunna bekräfta det automatiska förflyttningen innan turen går över till nästa spelare." 
+                oldSquare autoMove = possibleSquares.peek();
+                int x2 = autoMove.getX(); int y2 = autoMove.getY();
+                placePiece(x2,y2,currPiece, true);
+                System.out.println(x2 + " " + y2);
+
+                String ans = " ";
+                while (!ans.equals("y") & !ans.equals("n")) {
+                    System.out.print("Confirm move? y/n: ");
+                    ans = sc.next();
+                }
+                if (ans.equals("n")) {
+                    moveCount-=2; placePiece(x, y, currPiece, true);
+                }
             }
+        }
         else if(moveCount%4==1) {
             endSquare = board[x][y];
             if (board[x][y].equals(startSquare)) {moveCount-=2; placePiece(x, y, currPiece, false);} // tillåta att gå tillbaka och köra igen
             else if (currPiece.moveOK(startSquare, endSquare, board)) {
                 placePiece(x,y,currPiece, true);    // vanlig utplacering
-            }
-            
-        }
-    
-    return false;
+            }   
+        }  
+    return moveCount%4;     // used in ViewControl
 
     }
 
-    public void analyze(oldSquare s1, Piece p) {
+    public Queue<oldSquare> analyze(oldSquare s1, Piece p) {
+        Queue<oldSquare> possibleSquares = new LinkedList<>();
         for (int i=0; i<8; i++) {
             for (int j=0; j<8; j++) {
                 oldSquare s2 = board[i][j];
                 if (p.moveOK(s1, s2, board)) {
-                    
+                    possibleSquares.add(s2);
                 }
             }
         }
+        return possibleSquares;
     }
+
 
     @Override
     public oldSquare getStatus(int x, int y) {
