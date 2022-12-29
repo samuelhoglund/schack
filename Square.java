@@ -10,5 +10,4 @@ public class Square extends JButton {
     public Square() {
         super();
     }
-    
 }

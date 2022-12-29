@@ -12,7 +12,6 @@ import java.awt.Dimension;
 class ViewControl extends JFrame implements ActionListener {
 
     private static Chess game;
-    private static int size;
     private static Square[][] graphicBoard;
     private JTextField mess = new JTextField();                     // JLabel funkar också
     private Color dark = new Color(115,149,90);
@@ -27,7 +26,6 @@ class ViewControl extends JFrame implements ActionListener {
         
         graphicBoard = new Square[n][n];
         game = gm;
-        size = n;
         
         boardHost.setLayout(new GridLayout(n,n));
         System.out.println(dir);
@@ -58,7 +56,7 @@ class ViewControl extends JFrame implements ActionListener {
         this.setSize(960, 1050);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
-        this.setTitle("Samuel Khedri och Josef Höglund");
+        this.setTitle("Chess by Samuel Khedri och Josef Höglund");
         
         mess.setEditable(false);
         mess.setHorizontalAlignment(JTextField.CENTER);
@@ -108,8 +106,8 @@ class ViewControl extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Square s = (Square) e.getSource();
-        int x = s.x;//getX();
-        int y = s.y;//getY();
+        int x = s.x;
+        int y = s.y;
         int moveCount = game.move(x, y);
         int i; int j;
         if(moveCount==2) { // black grab WAS MADE

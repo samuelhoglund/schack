@@ -17,6 +17,7 @@ public class Chess implements Boardgame {
     oldSquare startSquare; oldSquare endSquare;
     Queue<oldSquare> possibleSquares = new LinkedList<>();  // initally empty. To be filled with available spots a piece can move to.
     Scanner sc = new Scanner(System.in);
+    oldSquare autoMovedFrom = null;
 
     public Chess() {
         this.board = new oldSquare[8][8];
@@ -87,23 +88,93 @@ public class Chess implements Boardgame {
         
         moveCount++;
 
-        // PROMOVERING
+        // PROMOVERING / PROMOTION
         if(p.getClass().getName().equals("Pawn") & (x==0 | x==7)) {     
-            if (white) {
-                p = new Queen(true, this, new ImageIcon(dir + "WhiteQueen.png"));
-            }
-            else {
-                p = new Queen(false, this, new ImageIcon(dir + "BlackQueen.png"));
+            p = promotion(p, white);
+        }
+
+        board[x][y].addPiece(p);////
+
+        // Identifiera när ett drag medför att andra spelarens kung är hotad (schack) och meddela det.
+        oldSquare oppositeKingPos = findOppositeKing(white);
+        boolean check = isCheck(white, oppositeKingPos);
+
+        if (check) {
+            currMessage = "Check! " + currMessage; 
+        }
+        
+    }
+
+    // kanske implementera en returnPiece-metod
+    /* 
+    public void returnPiece(oldSquare current, oldSquare destination) {
+        Piece p = current.getPiece();
+        current.setEmpty();
+        destination.addPiece(p);
+    }
+    */
+    
+    private oldSquare findOppositeKing(boolean white) {
+        oldSquare oppositeKingPos;
+        Piece tempPiece;
+        // om white, börja från botten; om black, börja från toppen PETITESEESPOAISOIDUJAODISADOIASH
+        for (int i=0; i<8; i++) {
+            for (int j=0; j<8; j++) {
+                tempPiece = board[i][j].getPiece();
+                if (tempPiece!=null && (tempPiece.getClass().getName().equals("King") & tempPiece.color!=white)) {
+                    oppositeKingPos = board[i][j];
+                    return oppositeKingPos;
+                }   
             }
         }
-        board[x][y].addPiece(p);////
+        return null;
+    }
+
+    private boolean isCheck(boolean white, oldSquare oppositeKingPos) {
+        Piece tempPiece;
+
+        for (int i=0; i<8; i++) {
+            for (int j=0; j<8; j++) {
+                tempPiece = board[i][j].getPiece();
+
+                if (tempPiece!=null && tempPiece.color==white) {
+                    oldSquare thisSquare = board[i][j];
+                    if (tempPiece.moveOK(thisSquare, oppositeKingPos, board)) {
+                        return true;
+                    }
+                }
+            }
+        }
         
+        return false;
+    }
+
+    private Piece promotion(Piece p, boolean white) {
+        if (white) {
+            p = new Queen(true, this, new ImageIcon(dir + "WhiteQueen.png"));
+        }
+        else {
+            p = new Queen(false, this, new ImageIcon(dir + "BlackQueen.png"));
+        }
+        return p;
     }
 
 
     @Override
     public int move(int x, int y) {
         int returnInt = -1;
+        
+        ////////////////////// detta ska fixas härnäst, dvs att confirma/denya automovet
+        if (autoMovedFrom != null) {
+            oldSquare requestedSquare = board[x][y];
+            if (requestedSquare.equals(autoMovedFrom)) {
+                moveCount-=2; 
+
+                placePiece(x, y, currPiece, false);
+            }
+        }
+        
+        autoMovedFrom = null;
         if(moveCount%4==2) {
             returnInt = 2;
             startSquare = board[x][y];
@@ -111,13 +182,19 @@ public class Chess implements Boardgame {
             
             if (currPiece!=null && !currPiece.color) {     // if you picked up your own piece
                 possibleSquares = analyze(startSquare, currPiece);
-            
 
                 if (possibleSquares.isEmpty()) {
                     moveCount-=2; 
                     placePiece(x, y, currPiece, false);
                     currMessage = "No free spots."; 
                 }   // man får köra om
+                else if (possibleSquares.size() == 1) {
+                    autoMovedFrom = startSquare;
+                    oldSquare autoMove = possibleSquares.peek();
+                    placePiece(autoMove.getX(), autoMove.getY(), currPiece, false);
+                    currMessage = "Auto-moved from blue to red. Approve by clicking red, disapprove by clicking blue.";
+                    return 5;
+                }
             }
             else { return -1; } // faulty move
             /* 
