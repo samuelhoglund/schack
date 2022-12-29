@@ -17,6 +17,8 @@ class ViewControl extends JFrame implements ActionListener {
     private JTextField mess = new JTextField();                     // JLabel funkar också
     private Color dark = new Color(115,149,90);
     private Color light = new Color(238,237,211);
+    private Color lightRed = new Color(255, 179, 179);
+    private Color darkRed = new Color(255, 102, 102);
     String dir = System.getProperty("user.dir").replace("\\", "\\\\") + "\\\\proj\\\\images";
     boolean movePhase = true;
 
@@ -80,6 +82,21 @@ class ViewControl extends JFrame implements ActionListener {
         }
     }
 
+    private void highlightMoves(Square[][] graphicBoard, int i, int j) {
+        if (i%2==0) {
+            if (j%2==0) {
+                graphicBoard[i][j].setBackground(darkRed);
+            }
+        else {graphicBoard[i][j].setBackground(lightRed);}
+        }
+        else {
+            if (j%2==0) {
+                graphicBoard[i][j].setBackground(lightRed);
+            }
+            else {graphicBoard[i][j].setBackground(darkRed);}
+        }
+    }
+
     private void setIcon(Square[][] graphicBoard, int i, int j) {
         Piece piece = game.board[i][j].getPiece();
         if (piece!=null) {
@@ -93,21 +110,48 @@ class ViewControl extends JFrame implements ActionListener {
         Square s = (Square) e.getSource();
         int x = s.x;//getX();
         int y = s.y;//getY();
-        game.move(x, y);
-        if (movePhase) {
-            
+        int moveCount = game.move(x, y);
+        int i; int j;
+        if(moveCount==2) { // black grab WAS MADE
+            for (oldSquare sq:game.possibleSquares) {
+                i = sq.getX(); j = sq.getY();
+                highlightMoves(graphicBoard,i,j);
+            }
         }
+        else if(moveCount==3) { // black place WAS MADE
+            for (oldSquare sq:game.possibleSquares) {
+                i = sq.getX(); j = sq.getY();
+                chequer(graphicBoard,i,j);
+            }
+        }
+        else if(moveCount==0) { // white grab WAS MADE
+            for (oldSquare sq:game.possibleSquares) {
+                i = sq.getX(); j = sq.getY();
+                highlightMoves(graphicBoard,i,j);
+            }
+        }
+        else if(moveCount==1) { // white place WAS MADE
+            for (oldSquare sq:game.possibleSquares) {
+                i = sq.getX(); j = sq.getY();
+                chequer(graphicBoard,i,j);
+            }
+        }
+        else {
+            System.out.println("hamande i movecount = -1");
+        }
+
 
         mess.setText(game.getMessage());
         setIcon(graphicBoard, x, y);
 
         movePhase = !movePhase;
         
-        for (int i=0; i<size; i++){         // Update the buttonfield with getStatus(i, j)
-            for (int j=0; j<size; j++){
+        /* 
+        for (int ii=0; ii<size; ii++){         // Update the buttonfield with getStatus(i, j)
+            for (int jj=0; jj<size; jj++){
                 //setIcon(graphicBoard, i, j); 
                 //board[i][j].setText(game.getStatus(i, j));
             }
-        }        
+        }  */      
     }
 }

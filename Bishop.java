@@ -12,6 +12,9 @@ public class Bishop extends Piece {
     boolean moveOK(oldSquare s1, oldSquare s2, oldSquare[][] board) {
         int dx; int dy;
 
+        // base base base case
+        if (s1.equals(s2)) {return false; }
+
         //if (s1.x == s2.x | s1.y == s2.y) { return false; }
         dx = Math.abs(s2.x-s1.x); dy = Math.abs(s2.y-s1.y);
         // base cases

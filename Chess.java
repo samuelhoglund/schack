@@ -59,7 +59,6 @@ public class Chess implements Boardgame {
 
 
     private Piece grabPiece(int x, int y, boolean white) {
-        System.out.println("här");
         String tempMessage;
         
         if (white) {
@@ -87,24 +86,41 @@ public class Chess implements Boardgame {
         currMessage = tempMessage + "Grab a piece. ";
         
         moveCount++;
-        board[x][y].addPiece(p);//// 
+
+        // PROMOVERING
+        if(p.getClass().getName().equals("Pawn") & (x==0 | x==7)) {     
+            if (white) {
+                p = new Queen(true, this, new ImageIcon(dir + "WhiteQueen.png"));
+            }
+            else {
+                p = new Queen(false, this, new ImageIcon(dir + "BlackQueen.png"));
+            }
+        }
+        board[x][y].addPiece(p);////
         
     }
 
 
     @Override
     public int move(int x, int y) {
+        int returnInt = -1;
         if(moveCount%4==2) {
+            returnInt = 2;
             startSquare = board[x][y];
             currPiece = grabPiece(x,y, false);
             
-            possibleSquares = analyze(startSquare, currPiece);
+            if (currPiece!=null && !currPiece.color) {     // if you picked up your own piece
+                possibleSquares = analyze(startSquare, currPiece);
+            
 
-            if (possibleSquares.isEmpty()) {
-                moveCount-=2; 
-                placePiece(x, y, currPiece, false);
-                currMessage = "No free spots."; 
-            }   // man får köra om
+                if (possibleSquares.isEmpty()) {
+                    moveCount-=2; 
+                    placePiece(x, y, currPiece, false);
+                    currMessage = "No free spots."; 
+                }   // man får köra om
+            }
+            else { return -1; } // faulty move
+            /* 
             else if (possibleSquares.size() == 1) {
                 // "vill du gå hit?" "Spelaren ska kunna bekräfta det automatiska förflyttningen innan turen går över till nästa spelare." 
                 oldSquare autoMove = possibleSquares.remove();
@@ -120,28 +136,36 @@ public class Chess implements Boardgame {
                     moveCount-=2; placePiece(x, y, currPiece, false);
                 }
             }
+            */
             // annars ska det vara som vanligt. ViewControl fyller i tillgängliga rutor
 
             }
         else if(moveCount%4==3) {
+            returnInt = 3;
             endSquare = board[x][y];
             if (board[x][y].equals(startSquare)) {moveCount-=2; placePiece(x, y, currPiece, true);} // tillåta att gå tillbaka och köra igen om man e på samma ruta
             else if (currPiece.moveOK(startSquare, endSquare, board)) {
                 placePiece(x,y,currPiece, false);    // eliminering av motståndarpjäs
             }
+            else {return -1;}  // faulty move
             
         }
         else if(moveCount%4==0) {
+            returnInt = 0;
             startSquare = board[x][y];
             currPiece = grabPiece(x,y, true);
 
-            possibleSquares = analyze(startSquare, currPiece);
-
-            if (possibleSquares.isEmpty()) {
-                moveCount-=2; 
-                placePiece(x, y, currPiece, true);
-                currMessage = "No free spots."; 
-            }   // man får köra om
+            if (currPiece!=null && currPiece.color) {     // if you picked up your own piece
+                possibleSquares = analyze(startSquare, currPiece);
+            
+                if (possibleSquares.isEmpty()) {
+                    moveCount-=2; 
+                    placePiece(x, y, currPiece, true);
+                    currMessage = "No free spots."; 
+                }   // man får köra om
+            }
+            else { return -1; } // faulty move
+            /* 
             else if (possibleSquares.size() == 1) {
                 // "vill du gå hit?" "Spelaren ska kunna bekräfta det automatiska förflyttningen innan turen går över till nästa spelare." 
                 oldSquare autoMove = possibleSquares.peek();
@@ -158,15 +182,18 @@ public class Chess implements Boardgame {
                     moveCount-=2; placePiece(x, y, currPiece, true);
                 }
             }
+            */
         }
         else if(moveCount%4==1) {
+            returnInt = 1;
             endSquare = board[x][y];
             if (board[x][y].equals(startSquare)) {moveCount-=2; placePiece(x, y, currPiece, false);} // tillåta att gå tillbaka och köra igen
             else if (currPiece.moveOK(startSquare, endSquare, board)) {
                 placePiece(x,y,currPiece, true);    // vanlig utplacering
-            }   
+            }
+            else {return -1;}  // faulty move   
         }  
-    return moveCount%4;     // used in ViewControl
+    return returnInt;     // used in ViewControl
 
     }
 

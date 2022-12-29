@@ -14,7 +14,7 @@ public class Pawn extends Piece {
             if (!this.color) {   // black
                 if (s1.x == 1) {
                     // tillåt ett eller två steg framåt (eller eliminering)
-                    if (s2.y == s1.y & ((s2.x == 3 & !board[s2.x-1][s2.y].hasPiece()) | s2.x == 2)) {
+                    if (s2.y == s1.y & ((s2.x == 3 & !board[s1.x+1][s2.y].hasPiece()) | s2.x == 2)) {
                         return true;        // vanligt startdrag
                     }
                 }
@@ -28,7 +28,7 @@ public class Pawn extends Piece {
             else {              // white
                 if (s1.x == 6) {
                     // tillåt ett eller två steg framåt (eller eliminering)
-                    if (s2.y == s1.y & ((s2.x == 4 & !board[s2.x+1][s2.y].hasPiece()) | s2.x == 5)) {
+                    if (s2.y == s1.y & ((s2.x == 4 & !board[s1.x-1][s2.y].hasPiece()) | s2.x == 5)) {
                         return true;        // vanligt startdrag
                     } 
                 }

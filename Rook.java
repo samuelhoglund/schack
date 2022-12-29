@@ -12,6 +12,9 @@ public class Rook extends Piece {
     boolean moveOK(oldSquare s1, oldSquare s2, oldSquare[][] board) {
         int start = 0; int end = 0;
 
+        // base base base case
+        if (s1.equals(s2)) {return false; }
+
         // base case
         if (s2.hasPiece() && s2.getPiece().color==this.color) { return false; }
         if ((Math.abs(s2.x-s1.x) == 1 & s2.y == s1.y) || (Math.abs(s2.y-s1.y) == 1 & s2.x == s1.x)) {    // one square away
