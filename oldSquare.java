@@ -11,10 +11,10 @@ public class oldSquare {
         this.piece = piece;
     }
     public boolean hasPiece() {
-        if (this.piece!=null) {
-            return true;
+        if (this.piece==null) {
+            return false;
         }
-        return false;
+        return true;
     }
     public Piece getPiece() {
         return this.piece;

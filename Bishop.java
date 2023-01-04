@@ -19,34 +19,36 @@ public class Bishop extends Piece {
         dx = Math.abs(s2.x-s1.x); dy = Math.abs(s2.y-s1.y);
         // base cases
         if (dx-dy != 0 | (s2.hasPiece() && s2.getPiece().color==this.color)) { return false; }
+        
 
+        /* 
         if (dx == 1 & dy == 1){    // one square away
             return true;
-        }
-        if (s2.x-s1.x > 0) {
-            if (s2.y-s1.y > 0) {
-                for (int i : new Range(dx)) {
-                    if (board[s1.x+i][s1.y+i].hasPiece()) { return false; }
-                }
-                return true;
-            }
-            else {
-                for (int i : new Range(dx)) {
-                    if (board[s1.x+i][s1.y-i].hasPiece()) { return false; }
-                }
-                return true;
-            }
-        }
-        else {
-            if (s2.y-s1.y > 0) {
+        }*/
+        if (s2.y-s1.y > 0) {    // to the right
+            if (s2.x-s1.x < 0) {    // up
                 for (int i : new Range(dx)) {
                     if (board[s1.x-i][s1.y+i].hasPiece()) { return false; }
                 }
                 return true;
             }
-            else {
+            else {                  // down
+                for (int i : new Range(dx)) {
+                    if (board[s1.x+i][s1.y+i].hasPiece()) { return false; }
+                }
+                return true;
+            }
+        }
+        else {              // to the left
+            if (s2.x-s1.x < 0) {    // up
                 for (int i : new Range(dx)) {
                     if (board[s1.x-i][s1.y-i].hasPiece()) { return false; }
+                }
+                return true;
+            }
+            else {                  // down
+                for (int i : new Range(dx)) {
+                    if (board[s1.x+i][s1.y-i].hasPiece()) { return false; }
                 }
                 return true;
             }

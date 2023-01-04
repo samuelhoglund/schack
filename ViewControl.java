@@ -1,7 +1,6 @@
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 import java.awt.Color;
 import java.awt.event.*;
 import java.awt.GridLayout;
@@ -13,13 +12,15 @@ class ViewControl extends JFrame implements ActionListener {
 
     private static Chess game;
     private static Square[][] graphicBoard;
-    private JTextField mess = new JTextField();                     // JLabel funkar också
+    private JTextField mess = new JTextField();
+    
+    // Colors, for playing field and its different states
     private Color dark = new Color(115,149,90);
     private Color light = new Color(238,237,211);
     private Color lightRed = new Color(255, 179, 179);
     private Color darkRed = new Color(255, 102, 102);
-    String dir = System.getProperty("user.dir").replace("\\", "\\\\") + "\\\\proj\\\\images";
-    boolean movePhase = true;
+    private Color lightBlue = new Color(102, 163, 255);
+    private Color darkBlue = new Color(26, 117, 255);
 
     ViewControl (Chess gm, int n) {
         JPanel boardHost = new JPanel();
@@ -28,7 +29,6 @@ class ViewControl extends JFrame implements ActionListener {
         game = gm;
         
         boardHost.setLayout(new GridLayout(n,n));
-        System.out.println(dir);
         
         for (int i=0; i<n; i++){     
             for (int j=0; j<n; j++){
@@ -95,6 +95,22 @@ class ViewControl extends JFrame implements ActionListener {
         }
     }
 
+    private void highlightAutoMove(Square[][] graphicBoard, int i, int j) {
+        System.out.println("i: " + i);System.out.println("j: " + j);
+        if (i%2==0) {
+            if (j%2==0) {
+                graphicBoard[i][j].setBackground(darkBlue);
+            }
+        else {graphicBoard[i][j].setBackground(lightBlue);}
+        }
+        else {
+            if (j%2==0) {
+                graphicBoard[i][j].setBackground(lightBlue);
+            }
+            else {graphicBoard[i][j].setBackground(darkBlue);}
+        }
+    }
+
     private void setIcon(Square[][] graphicBoard, int i, int j) {
         Piece piece = game.board[i][j].getPiece();
         if (piece!=null) {
@@ -108,48 +124,45 @@ class ViewControl extends JFrame implements ActionListener {
         Square s = (Square) e.getSource();
         int x = s.x;
         int y = s.y;
-        int moveCount = game.move(x, y);
+        int moveCount = game.move(x, y);    // To get corresponding graphical updates
         int i; int j;
-        if(moveCount==2) { // black grab WAS MADE
+        if(moveCount==0 | moveCount == 2 ) { // grab was made
             for (oldSquare sq:game.possibleSquares) {
                 i = sq.getX(); j = sq.getY();
                 highlightMoves(graphicBoard,i,j);
             }
         }
-        else if(moveCount==3) { // black place WAS MADE
+        else if(moveCount==1 || moveCount==3) { // place was made
             for (oldSquare sq:game.possibleSquares) {
                 i = sq.getX(); j = sq.getY();
                 chequer(graphicBoard,i,j);
             }
         }
-        else if(moveCount==0) { // white grab WAS MADE
-            for (oldSquare sq:game.possibleSquares) {
-                i = sq.getX(); j = sq.getY();
-                highlightMoves(graphicBoard,i,j);
-            }
+        else if (moveCount == 5) {  // Auto-move        // återanvändande av variabelnamn (skriver över adresser på i och j)    ///////////////////////oaisudyfwsdiufy8sad76876df86(/&(/&&(/)))
+            i = game.startSquare.getX(); j = game.startSquare.getY();
+            setIcon(graphicBoard, i, j);
+            highlightAutoMove(graphicBoard, i, j);
+            
+            i = game.endSquare.getX(); j = game.endSquare.getY();
+            setIcon(graphicBoard, i, j);
+            highlightMoves(graphicBoard, i, j);
         }
-        else if(moveCount==1) { // white place WAS MADE
-            for (oldSquare sq:game.possibleSquares) {
-                i = sq.getX(); j = sq.getY();
-                chequer(graphicBoard,i,j);
-            }
+        else if (moveCount == 6) {
+            i = game.startSquare.getX(); j = game.startSquare.getY();
+            setIcon(graphicBoard, i, j);
+            chequer(graphicBoard, i, j);
+            
+            i = game.endSquare.getX(); j = game.endSquare.getY();
+            setIcon(graphicBoard, i, j);
+            chequer(graphicBoard, i, j);
         }
+        
         else {
             System.out.println("hamande i movecount = -1");
         }
 
-
         mess.setText(game.getMessage());
         setIcon(graphicBoard, x, y);
 
-        movePhase = !movePhase;
-        
-        /* 
-        for (int ii=0; ii<size; ii++){         // Update the buttonfield with getStatus(i, j)
-            for (int jj=0; jj<size; jj++){
-                //setIcon(graphicBoard, i, j); 
-                //board[i][j].setText(game.getStatus(i, j));
-            }
-        }  */      
     }
 }

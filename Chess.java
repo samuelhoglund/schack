@@ -18,6 +18,7 @@ public class Chess implements Boardgame {
     Queue<oldSquare> possibleSquares = new LinkedList<>();  // initally empty. To be filled with available spots a piece can move to.
     Scanner sc = new Scanner(System.in);
     oldSquare autoMovedFrom = null;
+    Piece autoMovedKilled = null;
 
     public Chess() {
         this.board = new oldSquare[8][8];
@@ -58,18 +59,17 @@ public class Chess implements Boardgame {
         }
     }
 
-
-    private Piece grabPiece(int x, int y, boolean white) {
+    private Piece grabPiece(int x, int y, boolean color) {
         String tempMessage;
         
-        if (white) {
+        if (color) {
             tempMessage = "White's turn. ";
         }
         else {tempMessage = "Black's turn. ";}
 
         Piece piece = board[x][y].getPiece();
         if (piece==null) { currMessage = tempMessage + "Grab a piece."; return piece; }
-        else if (piece.color != white) { currMessage = tempMessage + "Grab your own piece."; return piece; }
+        else if (piece.color != color) { currMessage = tempMessage + "Grab your own piece."; return piece; }
         
         moveCount++;
         board[x][y].setEmpty();
@@ -78,9 +78,9 @@ public class Chess implements Boardgame {
 
         return piece;
     }
-    private void placePiece(int x, int y, Piece p, boolean white) {
+    private void placePiece(int x, int y, Piece p, boolean color) {
         String tempMessage;
-        if (!white) {
+        if (!color) {   // color = false (black)
             tempMessage = "White's turn. ";
         }
         else {tempMessage = "Black's turn. ";}
@@ -90,17 +90,21 @@ public class Chess implements Boardgame {
 
         // PROMOVERING / PROMOTION
         if(p.getClass().getName().equals("Pawn") & (x==0 | x==7)) {     
-            p = promotion(p, white);
+            p = promotion(p, color);
         }
 
         board[x][y].addPiece(p);////
 
         // Identifiera när ett drag medför att andra spelarens kung är hotad (schack) och meddela det.
-        oldSquare oppositeKingPos = findOppositeKing(white);
-        boolean check = isCheck(white, oppositeKingPos);
-
-        if (check) {
-            currMessage = "Check! " + currMessage; 
+        oldSquare oppositeKingPos = findOppositeKing(color);
+        if (oppositeKingPos!=null) {
+            boolean check = isCheck(color, oppositeKingPos);
+            if (check) {
+                currMessage = "Check! " + currMessage; 
+            }
+        }
+        else {
+            currMessage = "Game over!";
         }
         
     }
@@ -114,15 +118,17 @@ public class Chess implements Boardgame {
     }
     */
     
-    private oldSquare findOppositeKing(boolean white) {
+    private oldSquare findOppositeKing(boolean color) {
+        // boolean color: white = true, black = false.
         oldSquare oppositeKingPos;
         Piece tempPiece;
-        // om white, börja från botten; om black, börja från toppen PETITESEESPOAISOIDUJAODISADOIASH
+        // om white, börja från botten; om black, börja från toppen PETITESEESPOAISOIDUJAODISADOIASH    ///////////////////////////////////////////////////////////
         for (int i=0; i<8; i++) {
             for (int j=0; j<8; j++) {
                 tempPiece = board[i][j].getPiece();
-                if (tempPiece!=null && (tempPiece.getClass().getName().equals("King") & tempPiece.color!=white)) {
+                if (tempPiece!=null && (tempPiece.getClass().getName().equals("King") & tempPiece.color!=color)) {
                     oppositeKingPos = board[i][j];
+                    //System.out.println("motståndarkung: " + board[i][j].getX() + " " + board[i][j].getY());
                     return oppositeKingPos;
                 }   
             }
@@ -130,14 +136,14 @@ public class Chess implements Boardgame {
         return null;
     }
 
-    private boolean isCheck(boolean white, oldSquare oppositeKingPos) {
+    private boolean isCheck(boolean color, oldSquare oppositeKingPos) {
+        // boolean color: white = true, black = false.
         Piece tempPiece;
-
         for (int i=0; i<8; i++) {
             for (int j=0; j<8; j++) {
                 tempPiece = board[i][j].getPiece();
 
-                if (tempPiece!=null && tempPiece.color==white) {
+                if (tempPiece!=null && tempPiece.color==color) {
                     oldSquare thisSquare = board[i][j];
                     if (tempPiece.moveOK(thisSquare, oppositeKingPos, board)) {
                         return true;
@@ -145,7 +151,6 @@ public class Chess implements Boardgame {
                 }
             }
         }
-        
         return false;
     }
 
@@ -160,28 +165,71 @@ public class Chess implements Boardgame {
     }
 
 
+    private int assertAutoMove(int x, int y) {
+        oldSquare requestedSquare = board[x][y];
+            if (requestedSquare.equals(autoMovedFrom)) {
+                // movet denyat. gå tillbaka till föregående ruta och låta användaren köra igen
+                if(moveCount%4==2) {
+                    moveCount-=2; 
+                    placePiece(x, y, currPiece, false);
+                    if (autoMovedKilled!=null) {
+                        moveCount -=2;
+                        placePiece(endSquare.x, endSquare.y, autoMovedKilled, autoMovedKilled.color); 
+                    }
+                    else {
+                        moveCount--;
+                        endSquare.setEmpty();
+                    }
+                }
+                else if(moveCount%4==0) {
+                    moveCount-=2; 
+                    placePiece(x, y, currPiece, true);
+                    if (autoMovedKilled!=null) {
+                        moveCount -=2;
+                        placePiece(endSquare.x, endSquare.y, autoMovedKilled, autoMovedKilled.color); 
+                    }
+                    else {
+                        moveCount--;
+                        endSquare.setEmpty();
+                    }
+                }
+            }
+            else if (requestedSquare.equals(endSquare)) {
+
+                // movet confirmat. turen går över.  
+                String tempMessage = "";
+
+                // Change message box
+                if (moveCount%4 == 0) {
+                    tempMessage = "White's turn. ";
+                }
+                else { tempMessage = "Black's turn. "; }
+                currMessage = tempMessage + "Grab a piece.";       
+            }
+            else { 
+                currMessage = "Faulty move. Please press the blue or red square.";
+                return -1;
+            }
+            autoMovedFrom = null; autoMovedKilled = null; // reset autoMove fields
+            return 6;
+    }
+
     @Override
     public int move(int x, int y) {
         int returnInt = -1;
         
-        ////////////////////// detta ska fixas härnäst, dvs att confirma/denya automovet
         if (autoMovedFrom != null) {
-            oldSquare requestedSquare = board[x][y];
-            if (requestedSquare.equals(autoMovedFrom)) {
-                moveCount-=2; 
-
-                placePiece(x, y, currPiece, false);
-            }
+            return assertAutoMove(x, y);
         }
         
-        autoMovedFrom = null;
-        if(moveCount%4==2) {
+        if(moveCount%4==2) {        // Black grab
             returnInt = 2;
             startSquare = board[x][y];
             currPiece = grabPiece(x,y, false);
             
             if (currPiece!=null && !currPiece.color) {     // if you picked up your own piece
                 possibleSquares = analyze(startSquare, currPiece);
+                //System.out.println("kommer in till analyze " + possibleSquares.size());
 
                 if (possibleSquares.isEmpty()) {
                     moveCount-=2; 
@@ -189,35 +237,24 @@ public class Chess implements Boardgame {
                     currMessage = "No free spots."; 
                 }   // man får köra om
                 else if (possibleSquares.size() == 1) {
+                    System.out.println("analyze size 1");
                     autoMovedFrom = startSquare;
                     oldSquare autoMove = possibleSquares.peek();
+                    endSquare = board[autoMove.getX()][autoMove.getY()];
+                    
+                    if (endSquare.hasPiece()) {
+                        autoMovedKilled = endSquare.getPiece();     // save the killed piece in case it is to be recovered
+                    }
+
                     placePiece(autoMove.getX(), autoMove.getY(), currPiece, false);
                     currMessage = "Auto-moved from blue to red. Approve by clicking red, disapprove by clicking blue.";
-                    return 5;
+                    return 5;   ///////
                 }
             }
             else { return -1; } // faulty move
-            /* 
-            else if (possibleSquares.size() == 1) {
-                // "vill du gå hit?" "Spelaren ska kunna bekräfta det automatiska förflyttningen innan turen går över till nästa spelare." 
-                oldSquare autoMove = possibleSquares.remove();
-                int x2 = autoMove.getX(); int y2 = autoMove.getY();
-                placePiece(x2,y2,currPiece, false);
-
-                String ans = " ";
-                while (!ans.equals("y") & !ans.equals("n")) {
-                    System.out.print("Confirm move? y/n: ");
-                    ans = sc.next();
-                }
-                if (ans.equals("n")) {
-                    moveCount-=2; placePiece(x, y, currPiece, false);
-                }
-            }
-            */
-            // annars ska det vara som vanligt. ViewControl fyller i tillgängliga rutor
 
             }
-        else if(moveCount%4==3) {
+        else if(moveCount%4==3) {       // Black place
             returnInt = 3;
             endSquare = board[x][y];
             if (board[x][y].equals(startSquare)) {moveCount-=2; placePiece(x, y, currPiece, true);} // tillåta att gå tillbaka och köra igen om man e på samma ruta
@@ -227,7 +264,7 @@ public class Chess implements Boardgame {
             else {return -1;}  // faulty move
             
         }
-        else if(moveCount%4==0) {
+        else if(moveCount%4==0) {       // White grab
             returnInt = 0;
             startSquare = board[x][y];
             currPiece = grabPiece(x,y, true);
@@ -240,28 +277,24 @@ public class Chess implements Boardgame {
                     placePiece(x, y, currPiece, true);
                     currMessage = "No free spots."; 
                 }   // man får köra om
+                else if (possibleSquares.size() == 1) {
+                    System.out.println("analyze size 1");
+                    autoMovedFrom = startSquare;
+                    oldSquare autoMove = possibleSquares.peek();
+                    endSquare = board[autoMove.getX()][autoMove.getY()];
+                    
+                    if (endSquare.hasPiece()) {
+                        autoMovedKilled = endSquare.getPiece();     // save the killed piece in case it is to be recovered
+                    }
+    
+                    placePiece(autoMove.getX(), autoMove.getY(), currPiece, true);
+                    currMessage = "Auto-moved from blue to red. Approve by clicking red, disapprove by clicking blue.";
+                    return 5;   ///////
+                }
             }
             else { return -1; } // faulty move
-            /* 
-            else if (possibleSquares.size() == 1) {
-                // "vill du gå hit?" "Spelaren ska kunna bekräfta det automatiska förflyttningen innan turen går över till nästa spelare." 
-                oldSquare autoMove = possibleSquares.peek();
-                int x2 = autoMove.getX(); int y2 = autoMove.getY();
-                placePiece(x2,y2,currPiece, true);
-                System.out.println(x2 + " " + y2);
-
-                String ans = " ";
-                while (!ans.equals("y") & !ans.equals("n")) {
-                    System.out.print("Confirm move? y/n: ");
-                    ans = sc.next();
-                }
-                if (ans.equals("n")) {
-                    moveCount-=2; placePiece(x, y, currPiece, true);
-                }
-            }
-            */
         }
-        else if(moveCount%4==1) {
+        else if(moveCount%4==1) {       // White place
             returnInt = 1;
             endSquare = board[x][y];
             if (board[x][y].equals(startSquare)) {moveCount-=2; placePiece(x, y, currPiece, false);} // tillåta att gå tillbaka och köra igen
@@ -295,7 +328,6 @@ public class Chess implements Boardgame {
 
     @Override
     public String getMessage() {
-        //System.out.println("Click " + count);
         return moveCount + ": " + currMessage;
     }
     

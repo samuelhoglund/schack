@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
 
 class Range implements Iterable<Integer> {
 
-    private int start = 0;
+    private int start = 1;  // A range starting from 1
     private int limit;
 
     public Range(int limit) {
