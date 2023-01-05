@@ -108,27 +108,17 @@ public class Chess implements Boardgame {
         }
         
     }
-
-    // kanske implementera en returnPiece-metod
-    /* 
-    public void returnPiece(oldSquare current, oldSquare destination) {
-        Piece p = current.getPiece();
-        current.setEmpty();
-        destination.addPiece(p);
-    }
-    */
     
     private oldSquare findOppositeKing(boolean color) {
         // boolean color: white = true, black = false.
         oldSquare oppositeKingPos;
         Piece tempPiece;
-        // om white, börja från botten; om black, börja från toppen PETITESEESPOAISOIDUJAODISADOIASH    ///////////////////////////////////////////////////////////
+
         for (int i=0; i<8; i++) {
             for (int j=0; j<8; j++) {
                 tempPiece = board[i][j].getPiece();
                 if (tempPiece!=null && (tempPiece.getClass().getName().equals("King") & tempPiece.color!=color)) {
                     oppositeKingPos = board[i][j];
-                    //System.out.println("motståndarkung: " + board[i][j].getX() + " " + board[i][j].getY());
                     return oppositeKingPos;
                 }   
             }
@@ -214,97 +204,79 @@ public class Chess implements Boardgame {
             return 6;
     }
 
+    private int grabPhase(int x, int y, boolean color) {
+        int returnInt = -1;
+        if (color) {
+            returnInt = 0;
+        }
+        else { returnInt = 2; }
+        
+        startSquare = board[x][y];
+        currPiece = grabPiece(x,y, color);
+        
+        if (currPiece!=null && currPiece.color==color) {     // if you picked up your own piece
+            possibleSquares = analyze(startSquare, currPiece);
+
+            if (possibleSquares.isEmpty()) {
+                moveCount-=2; 
+                placePiece(x, y, currPiece, color);
+                currMessage = "No free spots."; 
+            }   // man får köra om
+            else if (possibleSquares.size() == 1) {
+                System.out.println("analyze size 1");
+                autoMovedFrom = startSquare;
+                oldSquare autoMove = possibleSquares.peek();
+                endSquare = board[autoMove.getX()][autoMove.getY()];
+                
+                if (endSquare.hasPiece()) {
+                    autoMovedKilled = endSquare.getPiece();     // save the killed piece in case it is to be recovered
+                }
+
+                placePiece(autoMove.getX(), autoMove.getY(), currPiece, color);
+                currMessage = "Auto-moved from blue to red. Approve by clicking red, disapprove by clicking blue.";
+                return 5;   ///////
+            }
+        }
+        else { return -1; } // faulty move
+        return returnInt;
+    }
+
+    private int placePhase(int x, int y, boolean color) {
+        int returnInt = -1;
+        if (color) {
+            returnInt = 1;
+        }
+        else {
+            returnInt = 3;
+        }
+        endSquare = board[x][y];
+        if (board[x][y].equals(startSquare)) {moveCount-=2; placePiece(x, y, currPiece, !color);} // tillåta att gå tillbaka och köra igen
+        else if (currPiece.moveOK(startSquare, endSquare, board)) {
+            placePiece(x,y,currPiece, color);    // vanlig utplacering
+        }
+        else {return -1;}  // faulty move   
+    return returnInt;     
+    }
+
     @Override
     public int move(int x, int y) {
         int returnInt = -1;
-        
         if (autoMovedFrom != null) {
             return assertAutoMove(x, y);
         }
-        
         if(moveCount%4==2) {        // Black grab
-            returnInt = 2;
-            startSquare = board[x][y];
-            currPiece = grabPiece(x,y, false);
-            
-            if (currPiece!=null && !currPiece.color) {     // if you picked up your own piece
-                possibleSquares = analyze(startSquare, currPiece);
-                //System.out.println("kommer in till analyze " + possibleSquares.size());
-
-                if (possibleSquares.isEmpty()) {
-                    moveCount-=2; 
-                    placePiece(x, y, currPiece, false);
-                    currMessage = "No free spots."; 
-                }   // man får köra om
-                else if (possibleSquares.size() == 1) {
-                    System.out.println("analyze size 1");
-                    autoMovedFrom = startSquare;
-                    oldSquare autoMove = possibleSquares.peek();
-                    endSquare = board[autoMove.getX()][autoMove.getY()];
-                    
-                    if (endSquare.hasPiece()) {
-                        autoMovedKilled = endSquare.getPiece();     // save the killed piece in case it is to be recovered
-                    }
-
-                    placePiece(autoMove.getX(), autoMove.getY(), currPiece, false);
-                    currMessage = "Auto-moved from blue to red. Approve by clicking red, disapprove by clicking blue.";
-                    return 5;   ///////
-                }
-            }
-            else { return -1; } // faulty move
-
+           return grabPhase(x, y, false);
             }
         else if(moveCount%4==3) {       // Black place
-            returnInt = 3;
-            endSquare = board[x][y];
-            if (board[x][y].equals(startSquare)) {moveCount-=2; placePiece(x, y, currPiece, true);} // tillåta att gå tillbaka och köra igen om man e på samma ruta
-            else if (currPiece.moveOK(startSquare, endSquare, board)) {
-                placePiece(x,y,currPiece, false);    // eliminering av motståndarpjäs
-            }
-            else {return -1;}  // faulty move
-            
+            return placePhase(x, y, false);
         }
         else if(moveCount%4==0) {       // White grab
-            returnInt = 0;
-            startSquare = board[x][y];
-            currPiece = grabPiece(x,y, true);
-
-            if (currPiece!=null && currPiece.color) {     // if you picked up your own piece
-                possibleSquares = analyze(startSquare, currPiece);
-            
-                if (possibleSquares.isEmpty()) {
-                    moveCount-=2; 
-                    placePiece(x, y, currPiece, true);
-                    currMessage = "No free spots."; 
-                }   // man får köra om
-                else if (possibleSquares.size() == 1) {
-                    System.out.println("analyze size 1");
-                    autoMovedFrom = startSquare;
-                    oldSquare autoMove = possibleSquares.peek();
-                    endSquare = board[autoMove.getX()][autoMove.getY()];
-                    
-                    if (endSquare.hasPiece()) {
-                        autoMovedKilled = endSquare.getPiece();     // save the killed piece in case it is to be recovered
-                    }
-    
-                    placePiece(autoMove.getX(), autoMove.getY(), currPiece, true);
-                    currMessage = "Auto-moved from blue to red. Approve by clicking red, disapprove by clicking blue.";
-                    return 5;   ///////
-                }
-            }
-            else { return -1; } // faulty move
+            return grabPhase(x, y, true);
         }
         else if(moveCount%4==1) {       // White place
-            returnInt = 1;
-            endSquare = board[x][y];
-            if (board[x][y].equals(startSquare)) {moveCount-=2; placePiece(x, y, currPiece, false);} // tillåta att gå tillbaka och köra igen
-            else if (currPiece.moveOK(startSquare, endSquare, board)) {
-                placePiece(x,y,currPiece, true);    // vanlig utplacering
-            }
-            else {return -1;}  // faulty move   
-        }  
+            return placePhase(x, y, true);
+        }    
     return returnInt;     // used in ViewControl
-
     }
 
     public Queue<oldSquare> analyze(oldSquare s1, Piece p) {
