@@ -3,13 +3,13 @@ import javax.swing.Icon;
 
 public class Rook extends Piece {
 
-    Rook(boolean color, Chess board, Icon image) {
-        super(color, board, image);
+    Rook(boolean color, Icon image) {
+        super(color, image);
         //TODO Auto-generated constructor stub
     }
 
     @Override
-    boolean moveOK(oldSquare s1, oldSquare s2, oldSquare[][] board) {
+    boolean moveOK(gameSquare s1, gameSquare s2, gameSquare[][] board) {
         int start = 0; int end = 0;
 
         // base base base case

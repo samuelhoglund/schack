@@ -1,11 +1,11 @@
 
 
 
-public class oldSquare {
+public class gameSquare {
     public int x; public int y;   // Coordinates
     Piece piece;
     
-    public oldSquare(int x, int y, Piece piece) {
+    public gameSquare(int x, int y, Piece piece) {
         this.x = x;
         this.y = y;
         this.piece = piece;
@@ -25,7 +25,6 @@ public class oldSquare {
     public void addPiece(Piece p) {
         this.piece = p;
     }
-
     public int getX() {
         return this.x;
     }

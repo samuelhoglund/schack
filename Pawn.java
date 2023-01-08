@@ -3,13 +3,13 @@ import javax.swing.Icon;
 
 public class Pawn extends Piece {
 
-    Pawn(boolean color, Chess board, Icon image) {
-        super(color, board, image);
+    Pawn(boolean color, Icon image) {
+        super(color, image);
         //TODO Auto-generated constructor stub
     }
 
     @Override
-    boolean moveOK(oldSquare s1, oldSquare s2, oldSquare[][] board) {
+    boolean moveOK(gameSquare s1, gameSquare s2, gameSquare[][] board) {
         if (!s2.hasPiece()) {   // rörelsefas
             if (!this.color) {   // black
                 if (s1.x == 1) {

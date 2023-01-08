@@ -3,13 +3,13 @@ import javax.swing.Icon;
 
 public class Bishop extends Piece {
 
-    Bishop(boolean color, Chess board, Icon image) {
-        super(color, board, image);
+    Bishop(boolean color, Icon image) {
+        super(color, image);
         //TODO Auto-generated constructor stub
     }
 
     @Override
-    boolean moveOK(oldSquare s1, oldSquare s2, oldSquare[][] board) {
+    boolean moveOK(gameSquare s1, gameSquare s2, gameSquare[][] board) {
         int dx; int dy;
 
         // base base base case

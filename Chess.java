@@ -1,61 +1,63 @@
 
 
 import javax.swing.ImageIcon;
-import java.util.Scanner;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class Chess implements Boardgame {
 
-    oldSquare[][] board;
+    // Game functioning fields
+    gameSquare[][] board;
     int moveCount = 0;
     Piece currPiece;    //////////
-    static int count = 0;
     static String currMessage;
+    gameSquare startSquare; gameSquare endSquare;
+    Queue<gameSquare> possibleSquares = new LinkedList<>();  // initally empty. To be filled with available spots a piece can move to.
+
+    // For image management
     String dir = System.getProperty("user.dir").replace("\\", "\\\\") + "\\\\images\\\\";
-    oldSquare startSquare; oldSquare endSquare;
-    Queue<oldSquare> possibleSquares = new LinkedList<>();  // initally empty. To be filled with available spots a piece can move to.
-    Scanner sc = new Scanner(System.in);
-    oldSquare autoMovedFrom = null;
+    
+    // Auto-move fields
+    gameSquare autoMovedFrom = null;
     Piece autoMovedKilled = null;
 
     public Chess() {
-        this.board = new oldSquare[8][8];
+        this.board = new gameSquare[8][8];
         initCoords(); initWhite(); initBlack();
     }
 
     void initCoords() {     // initializing all squares and their coordinates
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                board[i][j] = new oldSquare(i, j, null);
+                board[i][j] = new gameSquare(i, j, null);
             }
         }
     }
     void initWhite() {
-        board[7][0].piece = new Rook(true, this, new ImageIcon(dir + "WhiteRook.png"));
-        board[7][1].piece = new Knight(true, this, new ImageIcon(dir + "WhiteKnight.png"));
-        board[7][2].piece = new Bishop(true, this, new ImageIcon(dir + "WhiteBishop.png"));
-        board[7][3].piece = new Queen(true, this, new ImageIcon(dir + "WhiteQueen.png"));
-        board[7][4].piece = new King(true, this, new ImageIcon(dir + "WhiteKing.png"));
-        board[7][5].piece = new Bishop(true, this, new ImageIcon(dir + "WhiteBishop.png"));
-        board[7][6].piece = new Knight(true, this, new ImageIcon(dir + "WhiteKnight.png"));
-        board[7][7].piece = new Rook(true, this, new ImageIcon(dir + "WhiteRook.png"));
+        board[7][0].piece = new Rook(true, new ImageIcon(dir + "WhiteRook.png"));
+        board[7][1].piece = new Knight(true, new ImageIcon(dir + "WhiteKnight.png"));
+        board[7][2].piece = new Bishop(true, new ImageIcon(dir + "WhiteBishop.png"));
+        board[7][3].piece = new Queen(true, new ImageIcon(dir + "WhiteQueen.png"));
+        board[7][4].piece = new King(true, new ImageIcon(dir + "WhiteKing.png"));
+        board[7][5].piece = new Bishop(true, new ImageIcon(dir + "WhiteBishop.png"));
+        board[7][6].piece = new Knight(true, new ImageIcon(dir + "WhiteKnight.png"));
+        board[7][7].piece = new Rook(true, new ImageIcon(dir + "WhiteRook.png"));
         for (int i = 0; i < 8; i++) {
-            board[6][i].piece = new Pawn(true, this, new ImageIcon(dir + "WhitePawn.png"));
+            board[6][i].piece = new Pawn(true, new ImageIcon(dir + "WhitePawn.png"));
         }
     }
     void initBlack() {
-        board[0][0].piece = new Rook(false, this, new ImageIcon(dir + "BlackRook.png"));
-        board[0][1].piece = new Knight(false, this, new ImageIcon(dir + "BlackKnight.png"));
-        board[0][2].piece = new Bishop(false, this, new ImageIcon(dir + "BlackBishop.png"));
-        board[0][4].piece = new King(false, this, new ImageIcon(dir + "BlackKing.png"));
-        board[0][3].piece = new Queen(false, this, new ImageIcon(dir + "BlackQueen.png"));
-        board[0][5].piece = new Bishop(false, this, new ImageIcon(dir + "BlackBishop.png"));
-        board[0][6].piece = new Knight(false, this, new ImageIcon(dir + "BlackKnight.png"));
-        board[0][7].piece = new Rook(false, this, new ImageIcon(dir + "BlackRook.png"));
+        board[0][0].piece = new Rook(false, new ImageIcon(dir + "BlackRook.png"));
+        board[0][1].piece = new Knight(false, new ImageIcon(dir + "BlackKnight.png"));
+        board[0][2].piece = new Bishop(false, new ImageIcon(dir + "BlackBishop.png"));
+        board[0][4].piece = new King(false, new ImageIcon(dir + "BlackKing.png"));
+        board[0][3].piece = new Queen(false, new ImageIcon(dir + "BlackQueen.png"));
+        board[0][5].piece = new Bishop(false, new ImageIcon(dir + "BlackBishop.png"));
+        board[0][6].piece = new Knight(false, new ImageIcon(dir + "BlackKnight.png"));
+        board[0][7].piece = new Rook(false, new ImageIcon(dir + "BlackRook.png"));
         for (int i = 0; i < 8; i++) {
-            board[1][i].piece = new Pawn(false, this, new ImageIcon(dir + "BlackPawn.png"));
+            board[1][i].piece = new Pawn(false, new ImageIcon(dir + "BlackPawn.png"));
         }
     }
 
@@ -96,7 +98,7 @@ public class Chess implements Boardgame {
         board[x][y].addPiece(p);////
 
         // Identifiera när ett drag medför att andra spelarens kung är hotad (schack) och meddela det.
-        oldSquare oppositeKingPos = findOppositeKing(color);
+        gameSquare oppositeKingPos = findOppositeKing(color);
         if (oppositeKingPos!=null) {
             boolean check = isCheck(color, oppositeKingPos);
             if (check) {
@@ -109,9 +111,9 @@ public class Chess implements Boardgame {
         
     }
     
-    private oldSquare findOppositeKing(boolean color) {
+    private gameSquare findOppositeKing(boolean color) {
         // boolean color: white = true, black = false.
-        oldSquare oppositeKingPos;
+        gameSquare oppositeKingPos;
         Piece tempPiece;
 
         for (int i=0; i<8; i++) {
@@ -126,7 +128,7 @@ public class Chess implements Boardgame {
         return null;
     }
 
-    private boolean isCheck(boolean color, oldSquare oppositeKingPos) {
+    private boolean isCheck(boolean color, gameSquare oppositeKingPos) {
         // boolean color: white = true, black = false.
         Piece tempPiece;
         for (int i=0; i<8; i++) {
@@ -134,7 +136,7 @@ public class Chess implements Boardgame {
                 tempPiece = board[i][j].getPiece();
 
                 if (tempPiece!=null && tempPiece.color==color) {
-                    oldSquare thisSquare = board[i][j];
+                    gameSquare thisSquare = board[i][j];
                     if (tempPiece.moveOK(thisSquare, oppositeKingPos, board)) {
                         return true;
                     }
@@ -146,17 +148,16 @@ public class Chess implements Boardgame {
 
     private Piece promotion(Piece p, boolean white) {
         if (white) {
-            p = new Queen(true, this, new ImageIcon(dir + "WhiteQueen.png"));
+            p = new Queen(true, new ImageIcon(dir + "WhiteQueen.png"));
         }
         else {
-            p = new Queen(false, this, new ImageIcon(dir + "BlackQueen.png"));
+            p = new Queen(false, new ImageIcon(dir + "BlackQueen.png"));
         }
         return p;
     }
 
-
     private int assertAutoMove(int x, int y) {
-        oldSquare requestedSquare = board[x][y];
+        gameSquare requestedSquare = board[x][y];
             if (requestedSquare.equals(autoMovedFrom)) {
                 // movet denyat. gå tillbaka till föregående ruta och låta användaren köra igen
                 if(moveCount%4==2) {
@@ -223,9 +224,8 @@ public class Chess implements Boardgame {
                 currMessage = "No free spots."; 
             }   // man får köra om
             else if (possibleSquares.size() == 1) {
-                System.out.println("analyze size 1");
                 autoMovedFrom = startSquare;
-                oldSquare autoMove = possibleSquares.peek();
+                gameSquare autoMove = possibleSquares.peek();
                 endSquare = board[autoMove.getX()][autoMove.getY()];
                 
                 if (endSquare.hasPiece()) {
@@ -234,7 +234,7 @@ public class Chess implements Boardgame {
 
                 placePiece(autoMove.getX(), autoMove.getY(), currPiece, color);
                 currMessage = "Auto-moved from blue to red. Approve by clicking red, disapprove by clicking blue.";
-                return 5;   ///////
+                return 5;   
             }
         }
         else { return -1; } // faulty move
@@ -279,11 +279,11 @@ public class Chess implements Boardgame {
     return returnInt;     // used in ViewControl
     }
 
-    public Queue<oldSquare> analyze(oldSquare s1, Piece p) {
-        Queue<oldSquare> possibleSquares = new LinkedList<>();
+    public Queue<gameSquare> analyze(gameSquare s1, Piece p) {
+        Queue<gameSquare> possibleSquares = new LinkedList<>();
         for (int i=0; i<8; i++) {
             for (int j=0; j<8; j++) {
-                oldSquare s2 = board[i][j];
+                gameSquare s2 = board[i][j];
                 if (p.moveOK(s1, s2, board)) {
                     possibleSquares.add(s2);
                 }
@@ -294,7 +294,7 @@ public class Chess implements Boardgame {
 
 
     @Override
-    public oldSquare getStatus(int x, int y) {
+    public gameSquare getStatus(int x, int y) {
         return board[x][y];
     }
 

@@ -11,7 +11,7 @@ import java.awt.Dimension;
 class ViewControl extends JFrame implements ActionListener {
 
     private static Chess game;
-    private static Square[][] graphicBoard;
+    private static visualSquare[][] graphicBoard;
     private JTextField mess = new JTextField();
     
     // Colors, for playing field and its different states
@@ -25,7 +25,7 @@ class ViewControl extends JFrame implements ActionListener {
     ViewControl (Chess gm, int n) {
         JPanel boardHost = new JPanel();
         
-        graphicBoard = new Square[n][n];
+        graphicBoard = new visualSquare[n][n];
         game = gm;
         
         boardHost.setLayout(new GridLayout(n,n));
@@ -33,7 +33,7 @@ class ViewControl extends JFrame implements ActionListener {
         for (int i=0; i<n; i++){     
             for (int j=0; j<n; j++){
                  
-                graphicBoard[i][j] = new Square();
+                graphicBoard[i][j] = new visualSquare();
                 
                 graphicBoard[i][j].x = i;
                 graphicBoard[i][j].y = j;
@@ -65,7 +65,7 @@ class ViewControl extends JFrame implements ActionListener {
         mess.setText("Welcome!");
     }
 
-    private void chequer(Square[][] graphicBoard, int i, int j) {
+    private void chequer(visualSquare[][] graphicBoard, int i, int j) {
         if (i%2==0) {
             if (j%2==0) {
                 graphicBoard[i][j].setBackground(dark);
@@ -80,7 +80,7 @@ class ViewControl extends JFrame implements ActionListener {
         }
     }
 
-    private void highlightMoves(Square[][] graphicBoard, int i, int j) {
+    private void highlightMoves(visualSquare[][] graphicBoard, int i, int j) {
         if (i%2==0) {
             if (j%2==0) {
                 graphicBoard[i][j].setBackground(darkRed);
@@ -95,8 +95,7 @@ class ViewControl extends JFrame implements ActionListener {
         }
     }
 
-    private void highlightAutoMove(Square[][] graphicBoard, int i, int j) {
-        System.out.println("i: " + i);System.out.println("j: " + j);
+    private void highlightAutoMove(visualSquare[][] graphicBoard, int i, int j) {
         if (i%2==0) {
             if (j%2==0) {
                 graphicBoard[i][j].setBackground(darkBlue);
@@ -111,7 +110,7 @@ class ViewControl extends JFrame implements ActionListener {
         }
     }
 
-    private void setIcon(Square[][] graphicBoard, int i, int j) {
+    private void setIcon(visualSquare[][] graphicBoard, int i, int j) {
         Piece piece = game.board[i][j].getPiece();
         if (piece!=null) {
             graphicBoard[i][j].setIcon(piece.image);
@@ -121,19 +120,19 @@ class ViewControl extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Square s = (Square) e.getSource();
+        visualSquare s = (visualSquare) e.getSource();
         int x = s.x;
         int y = s.y;
         int moveCount = game.move(x, y);    // To get corresponding graphical updates
         int i; int j;
         if(moveCount==0 | moveCount == 2 ) { // grab was made
-            for (oldSquare sq:game.possibleSquares) {
+            for (gameSquare sq:game.possibleSquares) {
                 i = sq.getX(); j = sq.getY();
                 highlightMoves(graphicBoard,i,j);
             }
         }
         else if(moveCount==1 || moveCount==3) { // place was made
-            for (oldSquare sq:game.possibleSquares) {
+            for (gameSquare sq:game.possibleSquares) {
                 i = sq.getX(); j = sq.getY();
                 chequer(graphicBoard,i,j);
             }
@@ -155,10 +154,6 @@ class ViewControl extends JFrame implements ActionListener {
             i = game.endSquare.getX(); j = game.endSquare.getY();
             setIcon(graphicBoard, i, j);
             chequer(graphicBoard, i, j);
-        }
-        
-        else {
-            System.out.println("hamande i movecount = -1");
         }
 
         mess.setText(game.getMessage());

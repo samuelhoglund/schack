@@ -3,13 +3,13 @@ import javax.swing.Icon;
 
 public class King extends Piece {
 
-    King(boolean color, Chess board, Icon image) {
-        super(color, board, image);
+    King(boolean color, Icon image) {
+        super(color, image);
         //TODO Auto-generated constructor stub
     }
 
     @Override
-    boolean moveOK(oldSquare s1, oldSquare s2, oldSquare[][] board) {
+    boolean moveOK(gameSquare s1, gameSquare s2, gameSquare[][] board) {
         int dx = Math.abs(s2.x-s1.x); int dy = Math.abs(s2.y-s1.y);
         
         if (s2.hasPiece() && s2.getPiece().color==this.color) { return false; }
