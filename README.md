@@ -1,9 +1,6 @@
 # schack
 DD1385 Projektuppgift: Schackspel
 
+Av Josef Khedri och Samuel Höglund.
 
-Samuels fotter luktar bajs
-
-Mannen josefs fotter luktar ocksa bajs
-
-Jag pusharrrr
+Instruktioner: Kör GUI-filen för att spela spelet.
