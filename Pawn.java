@@ -5,7 +5,6 @@ public class Pawn extends Piece {
 
     Pawn(boolean color, Icon image) {
         super(color, image);
-        //TODO Auto-generated constructor stub
     }
 
     @Override
@@ -51,14 +50,5 @@ public class Pawn extends Piece {
 
         return false;
     }
-
-    /* 
-    @Override
-    public String toString() {
-        if (this == null) { return "null"; }
-        else if (this.color==true) { return "white ahh pawn"; }
-        else { return "black ahh pawn"; }
-    }
-    */
     
 }

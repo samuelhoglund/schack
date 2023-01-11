@@ -7,7 +7,6 @@ import java.awt.GridLayout;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
-
 class ViewControl extends JFrame implements ActionListener {
 
     private static Chess game;
@@ -56,7 +55,7 @@ class ViewControl extends JFrame implements ActionListener {
         this.setSize(960, 1050);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
-        this.setTitle("Chess by Samuel Khedri och Josef Höglund");
+        this.setTitle("Chess by Samuel Höglund och Josef Khedri");
         
         mess.setEditable(false);
         mess.setHorizontalAlignment(JTextField.CENTER);
@@ -137,7 +136,7 @@ class ViewControl extends JFrame implements ActionListener {
                 chequer(graphicBoard,i,j);
             }
         }
-        else if (moveCount == 5) {  // Auto-move        // återanvändande av variabelnamn (skriver över adresser på i och j)    ///////////////////////oaisudyfwsdiufy8sad76876df86(/&(/&&(/)))
+        else if (moveCount == 5) {  // Auto-move
             i = game.startSquare.getX(); j = game.startSquare.getY();
             setIcon(graphicBoard, i, j);
             highlightAutoMove(graphicBoard, i, j);
@@ -158,6 +157,5 @@ class ViewControl extends JFrame implements ActionListener {
 
         mess.setText(game.getMessage());
         setIcon(graphicBoard, x, y);
-
     }
 }

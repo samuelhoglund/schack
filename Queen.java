@@ -5,7 +5,6 @@ public class Queen extends Piece {
 
     Queen(boolean color, Icon image) {
         super(color, image);
-        //TODO Auto-generated constructor stub
     }
 
     @Override
@@ -24,5 +23,4 @@ public class Queen extends Piece {
         }
         return false;
     }
-    
 }

@@ -5,7 +5,6 @@ public class Rook extends Piece {
 
     Rook(boolean color, Icon image) {
         super(color, image);
-        //TODO Auto-generated constructor stub
     }
 
     @Override
@@ -42,5 +41,4 @@ public class Rook extends Piece {
         }
         return false;  
     }
-
 }

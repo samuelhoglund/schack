@@ -5,7 +5,6 @@ public class Knight extends Piece {
 
     Knight(boolean color, Icon image) {
         super(color, image);
-        //TODO Auto-generated constructor stub
     }
 
     @Override
@@ -15,5 +14,4 @@ public class Knight extends Piece {
         if (Math.abs(s2.x-s1.x) == 2 & Math.abs(s2.y-s1.y) == 1) { return true; }
         return false;
     }
-    
 }

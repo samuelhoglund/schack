@@ -5,9 +5,8 @@ public class King extends Piece {
 
     King(boolean color, Icon image) {
         super(color, image);
-        //TODO Auto-generated constructor stub
     }
-
+    
     @Override
     boolean moveOK(gameSquare s1, gameSquare s2, gameSquare[][] board) {
         int dx = Math.abs(s2.x-s1.x); int dy = Math.abs(s2.y-s1.y);
@@ -20,7 +19,5 @@ public class King extends Piece {
             return true;
         }
         return false;
-
     }
-    
 }
