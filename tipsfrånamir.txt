@@ -1,6 +1,0 @@
-1. uppdatera inte rutor som inte påverkas av ett drag
-2. 
-
-
-Kolla om setXY behövs. 
-Kanske implementera toString() i pjäser
